@@ -1,0 +1,33 @@
+export const openApiDocument = {
+  openapi: "3.1.0",
+  info: { title: "Origin API", version: "1.0.0", description: "Origin Studios creator platform API" },
+  servers: [{ url: "/api/v1" }],
+  components: {
+    securitySchemes: { sessionCookie: { type: "apiKey", in: "cookie", name: "origin_session" } },
+    schemas: {
+      ApiError: { type: "object", required: ["code", "message"], properties: { code: { type: "string" }, message: { type: "string" } } },
+      ApiEnvelope: { type: "object", required: ["data", "error", "meta"], properties: { data: {}, error: { oneOf: [{ $ref: "#/components/schemas/ApiError" }, { type: "null" }] }, meta: { type: "object" } } },
+    },
+  },
+  paths: {
+    "/auth/signup": { post: { summary: "Create an account", responses: { "201": { description: "Account created" } } } },
+    "/auth/login": { post: { summary: "Create a session", responses: { "200": { description: "Authenticated" } } } },
+    "/auth/logout": { post: { summary: "Revoke the current session", security: [{ sessionCookie: [] }], responses: { "200": { description: "Signed out" } } } },
+    "/auth/session": { get: { summary: "Get current session", responses: { "200": { description: "Session state" } } } },
+    "/workspaces": { get: { summary: "List workspaces", security: [{ sessionCookie: [] }], responses: { "200": { description: "Workspaces" } } }, post: { summary: "Create a workspace", security: [{ sessionCookie: [] }], responses: { "201": { description: "Workspace created" } } } },
+    "/projects": { get: { summary: "List accessible projects", security: [{ sessionCookie: [] }], responses: { "200": { description: "Projects" } } }, post: { summary: "Create project", security: [{ sessionCookie: [] }], responses: { "201": { description: "Project created" } } } },
+    "/projects/{id}": { get: { summary: "Get a project and ordered scenes", security: [{ sessionCookie: [] }], responses: { "200": { description: "Project" } } } },
+    "/projects/{id}/scenes": { post: { summary: "Create a scene", security: [{ sessionCookie: [] }], responses: { "201": { description: "Scene created" } } } },
+    "/projects/{id}/sequence": { put: { summary: "Reorder scenes with revision protection", security: [{ sessionCookie: [] }], responses: { "200": { description: "Sequence reordered" }, "409": { description: "Revision conflict" } } } },
+    "/scenes/{id}/versions": { get: { summary: "List immutable scene versions", security: [{ sessionCookie: [] }], responses: { "200": { description: "Versions" } } }, post: { summary: "Create a child scene version", security: [{ sessionCookie: [] }], responses: { "201": { description: "Version created" } } } },
+    "/assets": { get: { summary: "List assets", security: [{ sessionCookie: [] }], responses: { "200": { description: "Assets" } } } },
+    "/uploads/sign": { post: { summary: "Create a signed media upload", security: [{ sessionCookie: [] }], responses: { "200": { description: "Signed upload" } } } },
+    "/uploads/confirm": { post: { summary: "Verify and persist uploaded media", security: [{ sessionCookie: [] }], responses: { "201": { description: "Asset created" } } } },
+    "/shot-design-runs": { post: { summary: "Start a shot design run", security: [{ sessionCookie: [] }], responses: { "202": { description: "Run queued" } } } },
+    "/generation-jobs/{id}": { get: { summary: "Get generation progress", security: [{ sessionCookie: [] }], responses: { "200": { description: "Generation job" } } } },
+    "/video-projects": { get: { summary: "List video projects", security: [{ sessionCookie: [] }], responses: { "200": { description: "Video projects" } } }, post: { summary: "Create a video project", security: [{ sessionCookie: [] }], responses: { "201": { description: "Video project created" } } } },
+    "/video-projects/{id}/render-jobs": { post: { summary: "Start a Remotion render", security: [{ sessionCookie: [] }], parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }], responses: { "202": { description: "Render queued" } } } },
+    "/comments": { get: { summary: "List project comments", security: [{ sessionCookie: [] }], responses: { "200": { description: "Comments" } } }, post: { summary: "Create a comment", security: [{ sessionCookie: [] }], responses: { "201": { description: "Comment created" } } } },
+    "/costs/summary": { get: { summary: "Get observational workspace costs", security: [{ sessionCookie: [] }], responses: { "200": { description: "Cost summary" } } } },
+  },
+} as const;

@@ -1,0 +1,2 @@
+ALTER TABLE "provider_models" ADD COLUMN "allowed_ratios" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "provider_models" ADD COLUMN "allowed_durations" jsonb DEFAULT '[]'::jsonb NOT NULL;
